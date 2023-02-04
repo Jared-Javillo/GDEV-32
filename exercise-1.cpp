@@ -22,6 +22,8 @@
 #define WINDOW_TITLE  "Hello Transform (use WASD and arrow keys)"
 GLFWwindow *pWindow;
 
+
+
 // define a vertex array to hold our vertices
 float vertices[] =
 {
@@ -29,14 +31,54 @@ float vertices[] =
     -0.50f, -0.50f,  0.00f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,
      0.50f, -0.50f,  0.00f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,
     -0.50f,  0.50f,  0.00f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,
-     0.50f,  0.50f,  0.00f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f
+     0.50f,  0.50f,  0.00f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f,
+     
+     -0.50f, 0.50f,  0.00f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f,
+     0.50f, 0.50f,  0.00f,   1.0f, 1.0f, 1.0f,  0.0f, 1.0f,
+    -0.50f,  0.50f,  -1.00f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,
+     0.50f,  0.50f,  -1.00f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,
+
+    -0.50f, -0.50f,  0.00f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,
+     0.50f, -0.50f,  0.00f,   1.0f, 1.0f, 1.0f,  1.0f, 0.0f,
+    -0.50f,  -0.50f,  -1.00f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,
+     0.50f,  -0.50f,  -1.00f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f,
+
+    -0.50f, -0.50f,  -1.00f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,
+     0.50f, -0.50f,  -1.00f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,
+    -0.50f,  0.50f,  -1.00f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,
+     0.50f,  0.50f,  -1.00f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f,
+
+    -0.50f,  -0.50f, -1.00f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,
+    -0.50f,  -0.50f, 0.00f,  1.0f, 1.0f, 1.0f,  -1.0f, 0.0f,
+    -0.50f,  0.50f, -1.00f,  1.0f, 1.0f, 1.0f,  0.0f, -1.0f,
+    -0.50f,  0.50f, 0.00f,  1.0f, 1.0f, 1.0f,  -1.0f, -1.0f,
+
+    0.50f,  -0.50f, -1.00f,  1.0f, 1.0f, 1.0f,  0.0f, 0.0f,
+    0.50f,  -0.50f, 0.00f,  1.0f, 1.0f, 1.0f,  1.0f, 0.0f,
+    0.50f,  0.50f, -1.00f,  1.0f, 1.0f, 1.0f,  0.0f, 1.0f,
+    0.50f,  0.50f, 0.00f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f,
 };
 
 // define the triangles as triplets of indices into the vertex array
 GLuint indices[] =
 {
     0, 1, 2,
-    1, 3, 2
+    1, 3, 2,
+
+    4, 5, 6,
+    5, 7, 6,
+
+    8, 9, 10,
+    9, 11, 10,
+
+    12, 13, 14,
+    13, 15, 14,
+
+    16, 17, 18,
+    17, 19, 18,
+
+    20, 21, 22,
+    21, 23, 22,
 };
 
 // define OpenGL object IDs to represent the vertex array, shader program, and texture in the GPU
@@ -52,6 +94,58 @@ float  y            = 0.0f;
 float  rotation     = 0.0f;
 float  scaling      = 1.0f;
 double previousTime = 0.0f;
+
+//Variables controlling camera
+float lastX = WINDOW_WIDTH/2, lastY = WINDOW_HEIGHT/2; //center of screen
+float yaw = -90.0f;
+float pitch = 0.0f;
+
+bool firstMouse = true;
+
+//initial camera vectors
+glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
+
+//Handle Mouse controls
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    //Is this the first mouse input
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+    
+    //Calculate mouse movement from last frame
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; 
+    lastX = xpos;
+    lastY = ypos;
+
+    //Mouse Sensitivity
+    float sensitivity = 0.1f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    //Handles yaw and pitch
+    yaw   += xoffset;
+    pitch += yoffset;
+
+    //Pitch constraints
+    if(pitch > 89.0f)
+        pitch = 89.0f;
+    if(pitch < -89.0f)
+        pitch = -89.0f;
+
+    //Calculated cameraFront vector
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    direction.y = sin(glm::radians(pitch));
+    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    cameraFront = glm::normalize(direction);
+}  
 
 // called by the main function to do initial setup, such as uploading vertex
 // arrays, shader programs, etc.; returns true if successful, false otherwise
@@ -96,7 +190,7 @@ bool setup()
         return false;
 
     // load our texture
-    texture = gdevLoadTexture("demo4.png", GL_REPEAT, true, true);
+    texture = gdevLoadTexture("exercise-1.png", GL_REPEAT, true, true);
     if (! texture)
         return false;
 
@@ -104,6 +198,11 @@ bool setup()
     // (you can omit these lines if you don't use alpha)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        // Enable depth test
+    glEnable(GL_DEPTH_TEST);
+    // Accept fragment if it closer to the camera than the former one
+    glDepthFunc(GL_LESS);
 
     return true;
 }
@@ -117,25 +216,18 @@ void render()
     previousTime = currentTime;
 
     // handle key events
-    if (glfwGetKey(pWindow, GLFW_KEY_D) == GLFW_PRESS)
-        x += elapsedTime;
-    if (glfwGetKey(pWindow, GLFW_KEY_A) == GLFW_PRESS)
-        x -= elapsedTime;
+    const float cameraSpeed = 0.05f; // adjust accordingly
     if (glfwGetKey(pWindow, GLFW_KEY_W) == GLFW_PRESS)
-        y += elapsedTime;
+        cameraPos += cameraSpeed * cameraFront;
     if (glfwGetKey(pWindow, GLFW_KEY_S) == GLFW_PRESS)
-        y -= elapsedTime;
-    if (glfwGetKey(pWindow, GLFW_KEY_LEFT) == GLFW_PRESS)
-        rotation += elapsedTime;
-    if (glfwGetKey(pWindow, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        rotation -= elapsedTime;
-    if (glfwGetKey(pWindow, GLFW_KEY_UP) == GLFW_PRESS)
-        scaling += elapsedTime;
-    if (glfwGetKey(pWindow, GLFW_KEY_DOWN) == GLFW_PRESS)
-        scaling -= elapsedTime;
-    if (scaling < 0.1f)
-        scaling = 0.1f;  // don't let the object scale all the way down to zero or negative
+        cameraPos -= cameraSpeed * cameraFront;
+    if (glfwGetKey(pWindow, GLFW_KEY_A) == GLFW_PRESS)
+        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if (glfwGetKey(pWindow, GLFW_KEY_D) == GLFW_PRESS)
+        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 
+    
+    glfwSetCursorPosCallback(pWindow, mouse_callback); 
     // clear the whole frame
     glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -154,9 +246,7 @@ void render()
 
     // ... set up the view matrix...
     glm::mat4 viewTransform;
-    viewTransform = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),   // eye position
-                                glm::vec3(0.0f, 0.0f, 0.0f),   // center position
-                                glm::vec3(0.0f, 1.0f, 0.0f));  // up vector
+    viewTransform = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
     glUniformMatrix4fv(glGetUniformLocation(shader, "viewTransform"),
                        1, GL_FALSE, glm::value_ptr(viewTransform));
 
@@ -226,6 +316,7 @@ int main(int argc, char** argv)
 
     // don't miss any momentary keypresses
     glfwSetInputMode(pWindow, GLFW_STICKY_KEYS, GLFW_TRUE);
+    glfwSetInputMode(pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
 
     // initialize GLAD, which acts as a library loader for the current OS's native OpenGL library
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
