@@ -81,12 +81,22 @@ GLuint indices[] =
     21, 23, 22,
 };
 
+// define different positions for the shape
+glm::vec3 shapePositions[] = {
+    glm::vec3( 0.0f,  0.0f,  0.0f),
+    glm::vec3( 2.0f,  2.0f, 0.0f),
+    glm::vec3(-2.0f, -2.0f, 0.0f),
+    glm::vec3(2.0f, -2.0f, 0.0f),
+    glm::vec3( -2.0f, 2.0f, 0.0f)
+};
+
 // define OpenGL object IDs to represent the vertex array, shader program, and texture in the GPU
 GLuint vao;         // vertex array object (stores the render state for our vertex array)
 GLuint vbo;         // vertex buffer object (reserves GPU memory for our vertex array)
 GLuint ebo;         // element buffer object (stores the indices of the vertices to form triangles)
 GLuint shader;      // combined vertex and fragment shader
 GLuint texture;     // texture object
+GLuint texture2;    // second texture object
 
 // variables controlling the object's position, rotation, and scaling
 float  x            = 0.0f;
@@ -194,6 +204,10 @@ bool setup()
     if (! texture)
         return false;
 
+    texture2 = gdevLoadTexture("pepe.jpg", GL_REPEAT, true, true);
+    if (! texture2)
+        return false;
+
     // enable OpenGL blending so that texels with alpha values less than one are drawn transparent
     // (you can omit these lines if you don't use alpha)
     glEnable(GL_BLEND);
@@ -250,21 +264,28 @@ void render()
     glUniformMatrix4fv(glGetUniformLocation(shader, "viewTransform"),
                        1, GL_FALSE, glm::value_ptr(viewTransform));
 
-    // ... set up the model matrix...
-    glm::mat4 modelTransform = glm::mat4(1.0f);  // set to identity first
-    modelTransform = glm::translate(modelTransform, glm::vec3(x, y, 0.0f));               // translate x and y
-    modelTransform = glm::rotate(modelTransform, rotation, glm::vec3(0.0f, 0.0f, 1.0f));  // rotate around z
-    modelTransform = glm::scale(modelTransform, glm::vec3(scaling, scaling, 1.0f));       // scale x and y
-    glUniformMatrix4fv(glGetUniformLocation(shader, "modelTransform"),
-                       1, GL_FALSE, glm::value_ptr(modelTransform));
-
-    // ... set the active texture...
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
     // ... then draw our triangles
     glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLuint), GL_UNSIGNED_INT, 0);
+    for (unsigned int i = 0; i < 5; i++)
+    {
+        // ... set up the model matrix...
+        glm::mat4 modelTransform = glm::mat4(1.0f);  // set to identity first
+        modelTransform = glm::translate(modelTransform, shapePositions[i]);               // translate x and y
+        modelTransform = glm::rotate(modelTransform, (float)glfwGetTime() * glm::radians(30.0f), glm::vec3(1.0f, 0.0f, 1.0f));  // rotate around z
+        modelTransform = glm::scale(modelTransform, glm::vec3(scaling, scaling, 1.0f));       // scale x and y
+        glUniformMatrix4fv(glGetUniformLocation(shader, "modelTransform"),
+                       1, GL_FALSE, glm::value_ptr(modelTransform));
+        
+        if (i < 2){
+            // ... set the active texture...
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture);
+        } else {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture2);
+        }
+        glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLuint), GL_UNSIGNED_INT, 0);
+    }
 }
 
 /*****************************************************************************/
