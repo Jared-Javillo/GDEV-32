@@ -106,7 +106,8 @@ float radius = 2.0f;
 float sectorCount = 72;                         // Column Count
 float stackCount = 24;                          // Row Count
 float xSphere, ySphere, zSphere, xySphere;      // vertex position
-float nx, ny ,nz ,r, g, b, lengthInv = 1.0f / radius;    // vertex Color
+float nx, ny ,nz ,r, g, b, lengthInv = 1.0f / radius;    // vertex normals and color
+float tx, ty, tz, px, py, pz, dotProdTemp, mag;
 float s, t;                                     // vertex tex
 
 float sectorStep = 2 * PI / sectorCount;    //Angles for each sector count
@@ -135,14 +136,6 @@ void SetupSphereData()
             verticesSphere.push_back(ySphere);
             verticesSphere.push_back(zSphere);
 
-            // Normal (r, g, b)
-            r = 1.0f;
-            g = 1.0f;
-            b = 1.0f;
-            verticesSphere.push_back(r);
-            verticesSphere.push_back(g);
-            verticesSphere.push_back(b);
-
             // normalized vertex normal (nx, ny, nz)
             nx = xSphere * lengthInv;
             ny = ySphere * lengthInv;
@@ -150,6 +143,22 @@ void SetupSphereData()
             verticesSphere.push_back(nx);
             verticesSphere.push_back(ny);
             verticesSphere.push_back(nz);
+
+            // normalized vertex tangent (tx, ty, tz)
+            mag = sqrt(xSphere * xSphere + ySphere * ySphere + zSphere * zSphere);
+            px = xSphere/mag * radius;
+            py = ySphere/mag * radius;
+            pz = zSphere/mag * radius;
+
+            tx = -py;
+            ty = px;
+            tz = 0.0;
+
+            mag = sqrt(tx*tx + ty*ty + tz*tz);
+
+            verticesSphere.push_back(tx/mag);
+            verticesSphere.push_back(ty/mag);
+            verticesSphere.push_back(tz/mag);
 
             // vertex tex coord (s, t) range between [0, 1]
             s = (float)j / sectorCount;
