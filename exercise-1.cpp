@@ -547,8 +547,8 @@ void render()
     glBindVertexArray(vaoSphere);
     // ... set up the model matrix...
     glm::mat4 modelTransform = glm::mat4(1.0f);  // set to identity first
-    modelTransform = glm::rotate(modelTransform, float(glfwGetTime()) * 1, glm::vec3(0.0f, 1.0f, 0.0f));
-    modelTransform = glm::translate(modelTransform, glm::vec3( 0.0f, 0.0f, 20.0f));  
+    //modelTransform = glm::rotate(modelTransform, float(glfwGetTime()) * 1, glm::vec3(0.0f, 1.0f, 0.0f));
+    //modelTransform = glm::translate(modelTransform, glm::vec3( 0.0f, 0.0f, 20.0f));  
     glUniformMatrix4fv(glGetUniformLocation(shader, "modelTransform"),
                     1, GL_FALSE, glm::value_ptr(modelTransform));
     
