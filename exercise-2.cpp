@@ -281,8 +281,8 @@ bool setup()
     glUniform1i(glGetUniformLocation(shader, "normalMap"),  1);
 
     // load our textures
-    texture[0] = gdevLoadTexture("demo5.png", GL_REPEAT, true, true);
-    texture[1] = gdevLoadTexture("demo5n.png", GL_REPEAT, true, true);
+    texture[0] = gdevLoadTexture("texture1.png", GL_REPEAT, true, true);
+    texture[1] = gdevLoadTexture("normal1.png", GL_REPEAT, true, true);
     if (! texture[0] || ! texture[1])
         return false;
 
