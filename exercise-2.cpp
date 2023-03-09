@@ -291,24 +291,6 @@ bool setup()
     glUniform1i(glGetUniformLocation(shader, "diffuseMap"), 0);
     glUniform1i(glGetUniformLocation(shader, "normalMap"),  1);
 
-    glUniform3fv(glGetUniformLocation(shader, "lightPosition"),
-                 1, glm::value_ptr(lightPosition));
-    glUniform3fv(glGetUniformLocation(shader, "lightDirection"),
-                 1, glm::value_ptr(lightDirection));
-    glUniform1f(glGetUniformLocation(shader, "lightInnerAngle"),
-                 lightInnerAngle);
-    glUniform1f(glGetUniformLocation(shader, "lightOuterAngle"),
-                 lightOuterAngle);
-
-    glUniform3fv(glGetUniformLocation(shader, "lightColor"),
-                 1, glm::value_ptr(lightColor));
-    glUniform1f(glGetUniformLocation(shader, "ambientIntensity"),
-                 ambientIntensity);
-    glUniform1f(glGetUniformLocation(shader, "specularIntensity"),
-                 specularIntensity);
-    glUniform1f(glGetUniformLocation(shader, "specularPower"),
-                 specularPower);
-
     // load our textures
     texture[0] = gdevLoadTexture("texture1.png", GL_REPEAT, true, true);
     texture[1] = gdevLoadTexture("normal1.png", GL_REPEAT, true, true);
@@ -409,7 +391,14 @@ void render()
         lightPosition -= glm::vec3(0.0f, 1.0f, 0.0f) * translationAmount;
     if (glfwGetKey(pWindow, GLFW_KEY_O) == GLFW_PRESS)
         lightPosition += glm::vec3(0.0f, 1.0f, 0.0f) * translationAmount;
-    
+    if (glfwGetKey(pWindow, GLFW_KEY_1) == GLFW_PRESS)
+        lightDirection.x += 0.5f * elapsedTime;
+    if (glfwGetKey(pWindow, GLFW_KEY_2) == GLFW_PRESS)
+        lightDirection.x -= 0.5f * elapsedTime;
+    if (glfwGetKey(pWindow, GLFW_KEY_3) == GLFW_PRESS)
+        lightDirection.z += 0.5f * elapsedTime;
+    if (glfwGetKey(pWindow, GLFW_KEY_4) == GLFW_PRESS)
+        lightDirection.z -= 0.5f * elapsedTime;
     // clear the whole frame
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
