@@ -15,6 +15,9 @@ uniform float ambientIntensity;
 uniform float specularIntensity;
 uniform float specularPower;
 out vec4 fragmentColor;
+uniform float constant;
+uniform float linear;
+uniform float quadratic;
 
 void main()
 {
@@ -39,6 +42,14 @@ void main()
     vec3 reflectDir = reflect(-lightDir, normalDir);
     vec3 lightSpecular = pow(max(dot(reflectDir, viewDir), 0), specularPower) * spotlightIntensity * lightColor * specularIntensity;
 
+    //calculate attenuation
+    float distance = length(shaderLightPosition - shaderPosition);
+    float attenuation = 1.0 / (constant + linear * distance + quadratic * (distance * distance));
+
+    lightAmbient *= attenuation;
+    lightDiffuse *= attenuation;
+    lightSpecular *= attenuation;
+    
     // compute final fragment color
     fragmentColor = vec4((lightAmbient + lightDiffuse + lightSpecular), 1.0f) * texture(diffuseMap, shaderTexCoord);
 }

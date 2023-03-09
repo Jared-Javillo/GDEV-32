@@ -258,6 +258,9 @@ float ambientIntensity = 0.2f;
 float specularIntensity = 0.5f;
 float specularPower = 1.0f;
 double previousTime = 0.0;
+float constant = 1.0f;
+float linear = 0.07f;
+float quadratic = 0.017f;
 
 // called by the main function to do initial setup, such as uploading vertex
 // arrays, shader programs, etc.; returns true if successful, false otherwise
@@ -293,7 +296,7 @@ bool setup()
     glUniform3fv(glGetUniformLocation(shader, "lightDirection"),
                  1, glm::value_ptr(lightDirection));
     glUniform1f(glGetUniformLocation(shader, "lightInnerAngle"),
-                 lightOuterAngle);
+                 lightInnerAngle);
     glUniform1f(glGetUniformLocation(shader, "lightOuterAngle"),
                  lightOuterAngle);
 
@@ -442,7 +445,7 @@ void render()
     glUniform3fv(glGetUniformLocation(shader, "lightDirection"),
                  1, glm::value_ptr(lightDirection));
     glUniform1f(glGetUniformLocation(shader, "lightInnerAngle"),
-                 lightOuterAngle);
+                 lightInnerAngle);
     glUniform1f(glGetUniformLocation(shader, "lightOuterAngle"),
                  lightOuterAngle);
 
@@ -454,6 +457,12 @@ void render()
                  specularIntensity);
     glUniform1f(glGetUniformLocation(shader, "specularPower"),
                  specularPower);
+    glUniform1f(glGetUniformLocation(shader, "constant"),
+                 constant);
+    glUniform1f(glGetUniformLocation(shader, "linear"),
+                 linear);
+    glUniform1f(glGetUniformLocation(shader, "quadratic"),
+                 quadratic);
 
     // ... set the active textures...
     glActiveTexture(GL_TEXTURE0);
