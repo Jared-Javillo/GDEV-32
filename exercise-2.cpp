@@ -248,7 +248,15 @@ struct polar
 
 // variables for tracking camera and light position
 polar camera;
-glm::vec3 lightPosition = glm::vec3(-5.0f, 3.0f, 5.0f);
+glm::vec3 lightPosition = glm::vec3(0.0f, 10.0f, 0.0f);
+glm::vec3 lightDirection = glm::vec3(0.0f, -1.0f, 0.0f);
+float lightInnerAngle = 0.174533f;
+float lightOuterAngle = 0.2f;
+
+glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+float ambientIntensity = 0.2f;
+float specularIntensity = 0.5f;
+float specularPower = 1.0f;
 double previousTime = 0.0;
 
 // called by the main function to do initial setup, such as uploading vertex
@@ -279,6 +287,24 @@ bool setup()
     glUseProgram(shader);
     glUniform1i(glGetUniformLocation(shader, "diffuseMap"), 0);
     glUniform1i(glGetUniformLocation(shader, "normalMap"),  1);
+
+    glUniform3fv(glGetUniformLocation(shader, "lightPosition"),
+                 1, glm::value_ptr(lightPosition));
+    glUniform3fv(glGetUniformLocation(shader, "lightDirection"),
+                 1, glm::value_ptr(lightDirection));
+    glUniform1f(glGetUniformLocation(shader, "lightInnerAngle"),
+                 lightOuterAngle);
+    glUniform1f(glGetUniformLocation(shader, "lightOuterAngle"),
+                 lightOuterAngle);
+
+    glUniform3fv(glGetUniformLocation(shader, "lightColor"),
+                 1, glm::value_ptr(lightColor));
+    glUniform1f(glGetUniformLocation(shader, "ambientIntensity"),
+                 ambientIntensity);
+    glUniform1f(glGetUniformLocation(shader, "specularIntensity"),
+                 specularIntensity);
+    glUniform1f(glGetUniformLocation(shader, "specularPower"),
+                 specularPower);
 
     // load our textures
     texture[0] = gdevLoadTexture("texture1.png", GL_REPEAT, true, true);
@@ -380,7 +406,7 @@ void render()
         lightPosition -= glm::vec3(0.0f, 1.0f, 0.0f) * translationAmount;
     if (glfwGetKey(pWindow, GLFW_KEY_O) == GLFW_PRESS)
         lightPosition += glm::vec3(0.0f, 1.0f, 0.0f) * translationAmount;
-
+    
     // clear the whole frame
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -410,9 +436,24 @@ void render()
     glUniformMatrix4fv(glGetUniformLocation(shader, "modelTransform"),
                        1, GL_FALSE, glm::value_ptr(modelTransform));
 
-    // ... set up the light position...
+    // ... set up the spotlight attributes
     glUniform3fv(glGetUniformLocation(shader, "lightPosition"),
                  1, glm::value_ptr(lightPosition));
+    glUniform3fv(glGetUniformLocation(shader, "lightDirection"),
+                 1, glm::value_ptr(lightDirection));
+    glUniform1f(glGetUniformLocation(shader, "lightInnerAngle"),
+                 lightOuterAngle);
+    glUniform1f(glGetUniformLocation(shader, "lightOuterAngle"),
+                 lightOuterAngle);
+
+    glUniform3fv(glGetUniformLocation(shader, "lightColor"),
+                 1, glm::value_ptr(lightColor));
+    glUniform1f(glGetUniformLocation(shader, "ambientIntensity"),
+                 ambientIntensity);
+    glUniform1f(glGetUniformLocation(shader, "specularIntensity"),
+                 specularIntensity);
+    glUniform1f(glGetUniformLocation(shader, "specularPower"),
+                 specularPower);
 
     // ... set the active textures...
     glActiveTexture(GL_TEXTURE0);
@@ -428,7 +469,7 @@ void render()
     // ... set up the model matrix...
     //modelTransform = glm::rotate(modelTransform, float(glfwGetTime()) * 1, glm::vec3(0.0f, 1.0f, 0.0f));
     //modelTransform = glm::translate(modelTransform, glm::vec3( 0.0f, 0.0f, 20.0f));  
-    modelTransform = glm::mat4(1.0f);
+    //modelTransform = glm::mat4(1.0f);
     glUniformMatrix4fv(glGetUniformLocation(shader, "modelTransform"),
                     1, GL_FALSE, glm::value_ptr(modelTransform));
 
@@ -500,7 +541,7 @@ int main(int argc, char** argv)
             // (by default, GLFW uses double-buffering with a front and back buffer;
             // all drawing goes to the back buffer, so the frame does not get shown yet)
             render();
-
+            std::cout << "Light Pos: " << lightPosition.x << " | "<< lightPosition.y << " | "<< lightPosition.z << "|" <<"\n";
             // swap the GLFW front and back buffers to show the next frame
             glfwSwapBuffers(pWindow);
 
