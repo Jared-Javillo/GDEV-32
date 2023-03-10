@@ -1,23 +1,14 @@
 /******************************************************************************
- * This demo is a modification of demo5.cpp to implement normal mapping,
- * simulating bumpy surfaces.
- *
- * The vertex data now includes tangent vectors (in addition to normals), and
- * the texture code is upgraded to load a diffuse map and a normal map at the
- * same time.
- *
-*  (Note that the shader code is also updated -- see demo5n.vs and demo5n.fs.)
- *
- * TIP: To help you understand the code better, I highly recommend that you
- * view the changes between demo5 and demo5n in VS Code by doing the following:
- *
- * 1. Right-click demo5.cpp in VS Code's Explorer pane and click
- *    "Select for Compare".
- * 2. Right-click the demo5n.cpp and click "Compare with Selected".
- *
- * (Do the same for demo5.vs/demo5n.vs and demo5.fs/demo5n.fs.)
- *
- * Happy hacking! - eric
+ Keys 1-9
+ Light Direction
+ Ambient Intensity
+ Specular Intensity
+ Shininess
+ Keys Z,X,C,V
+ Spotlight Radius
+ Spotlight Outer Radius
+ Keys U,O
+ Light Distance (to show attenuation)
  *****************************************************************************/
 
 #include <iostream>
@@ -252,10 +243,15 @@ glm::vec3 lightPosition = glm::vec3(0.0f, 10.0f, 0.0f);
 glm::vec3 lightDirection = glm::vec3(0.0f, -1.0f, 0.0f);
 float lightInnerAngle = 0.174533f;
 float lightOuterAngle = 0.2f;
+float cutOff = glm::cos(glm::radians(12.5f));
+float outerCutOff = glm::cos(glm::radians(17.5f));
 
 glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
-float ambientIntensity = 0.2f;
-float specularIntensity = 0.5f;
+glm::vec3 ambient = glm::vec3(0.2f, 0.2f, 0.2f);
+glm::vec3 diffuse = glm::vec3(0.8f, 0.8f, 0.8f);
+glm::vec3 specular = glm::vec3(1.0f, 1.0f, 1.0f);
+float ambientIntensity = 1.0f;
+float specularIntensity = 1.0f;
 float specularPower = 1.0f;
 double previousTime = 0.0;
 float constant = 1.0f;
@@ -399,6 +395,27 @@ void render()
         lightDirection.z += 0.5f * elapsedTime;
     if (glfwGetKey(pWindow, GLFW_KEY_4) == GLFW_PRESS)
         lightDirection.z -= 0.5f * elapsedTime;
+    if (glfwGetKey(pWindow, GLFW_KEY_5) == GLFW_PRESS)
+        ambientIntensity += 0.5f * elapsedTime;
+    if (glfwGetKey(pWindow, GLFW_KEY_6) == GLFW_PRESS)
+        ambientIntensity -= 0.5f * elapsedTime;
+    if (glfwGetKey(pWindow, GLFW_KEY_7) == GLFW_PRESS)
+        specularIntensity += 0.5f * elapsedTime;
+    if (glfwGetKey(pWindow, GLFW_KEY_8) == GLFW_PRESS)
+        specularIntensity -= 0.5f * elapsedTime;
+    if (glfwGetKey(pWindow, GLFW_KEY_9) == GLFW_PRESS)
+        specularPower += 0.5f * elapsedTime;
+    if (glfwGetKey(pWindow, GLFW_KEY_0) == GLFW_PRESS)
+        specularPower -= 0.5f * elapsedTime;
+    if (glfwGetKey(pWindow, GLFW_KEY_Z) == GLFW_PRESS)
+        cutOff += 0.5f * elapsedTime;
+    if (glfwGetKey(pWindow, GLFW_KEY_X) == GLFW_PRESS)
+        cutOff -= 0.5f * elapsedTime;
+    if (glfwGetKey(pWindow, GLFW_KEY_C) == GLFW_PRESS)
+        outerCutOff += 0.5f * elapsedTime;
+    if (glfwGetKey(pWindow, GLFW_KEY_V) == GLFW_PRESS)
+        outerCutOff -= 0.5f * elapsedTime;
+
     // clear the whole frame
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -437,9 +454,19 @@ void render()
                  lightInnerAngle);
     glUniform1f(glGetUniformLocation(shader, "lightOuterAngle"),
                  lightOuterAngle);
+    glUniform1f(glGetUniformLocation(shader, "cutOff"),
+                 cutOff);
+    glUniform1f(glGetUniformLocation(shader, "outerCutOff"),
+                 outerCutOff);
 
     glUniform3fv(glGetUniformLocation(shader, "lightColor"),
                  1, glm::value_ptr(lightColor));
+    glUniform3fv(glGetUniformLocation(shader, "ambient"),
+                 1, glm::value_ptr(ambient));
+    glUniform3fv(glGetUniformLocation(shader, "diffuse"),
+                 1, glm::value_ptr(diffuse));
+    glUniform3fv(glGetUniformLocation(shader, "specular"),
+                 1, glm::value_ptr(specular));
     glUniform1f(glGetUniformLocation(shader, "ambientIntensity"),
                  ambientIntensity);
     glUniform1f(glGetUniformLocation(shader, "specularIntensity"),
