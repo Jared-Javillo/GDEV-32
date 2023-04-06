@@ -1,4 +1,4 @@
-#version 330 core
+#version 330 core //fragment shader
 
 in vec3 shaderPosition;
 in mat3 shaderTBN;

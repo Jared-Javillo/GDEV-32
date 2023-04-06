@@ -19,7 +19,6 @@
  *
  * Happy hacking! - eric
  *****************************************************************************/
-
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -35,6 +34,17 @@
 #define PI 3.14
 #define WINDOW_TITLE  "Hello Lighting (use WASDQE keys for camera, IKJLUO keys for light)"
 GLFWwindow *pWindow;
+
+
+void printMat4(const glm::mat4& matrix)
+{
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            std::cout << matrix[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+}
 
 // model
 float vertices[] =
@@ -436,6 +446,11 @@ void render()
     glUniformMatrix4fv(glGetUniformLocation(shader, "modelTransform"),
                        1, GL_FALSE, glm::value_ptr(modelTransform));
 
+    glm::mat4 lightTransform = glm::translate(glm::mat4(1.0f), lightPosition);
+    glUniformMatrix4fv(glGetUniformLocation(shader, "lightTransform"),
+                       1, GL_FALSE, glm::value_ptr(lightTransform));
+    printMat4(lightTransform);
+
     // ... set up the spotlight attributes
     glUniform3fv(glGetUniformLocation(shader, "lightPosition"),
                  1, glm::value_ptr(lightPosition));
@@ -470,8 +485,6 @@ void render()
     //modelTransform = glm::rotate(modelTransform, float(glfwGetTime()) * 1, glm::vec3(0.0f, 1.0f, 0.0f));
     //modelTransform = glm::translate(modelTransform, glm::vec3( 0.0f, 0.0f, 20.0f));  
     //modelTransform = glm::mat4(1.0f);
-    glUniformMatrix4fv(glGetUniformLocation(shader, "modelTransform"),
-                    1, GL_FALSE, glm::value_ptr(modelTransform));
 
     glDrawElements(GL_TRIANGLES, 39744, GL_UNSIGNED_INT, (void*)0);
 }
@@ -541,7 +554,7 @@ int main(int argc, char** argv)
             // (by default, GLFW uses double-buffering with a front and back buffer;
             // all drawing goes to the back buffer, so the frame does not get shown yet)
             render();
-            std::cout << "Light Pos: " << lightPosition.x << " | "<< lightPosition.y << " | "<< lightPosition.z << "|" <<"\n";
+            
             // swap the GLFW front and back buffers to show the next frame
             glfwSwapBuffers(pWindow);
 
