@@ -185,6 +185,7 @@ struct polar
 // variables for tracking camera and light position
 polar camera;
 glm::vec3 lightPosition = glm::vec3(-5.0f, 3.0f, 5.0f);
+glm::vec3 lightDirection = glm::vec3(0.0f, -1.0f, 1.0f);
 double previousTime = 0.0;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -253,7 +254,7 @@ glm::mat4 renderShadowMap()
                                       0.1f,                      // near plane
                                       100.0f);                   // far plane
     lightTransform *= glm::lookAt(lightPosition,                 // eye position
-                                  glm::vec3(0.0f, 0.0f, 0.0f),   // center position
+                                  lightDirection,   // center position
                                   glm::vec3(0.0f, 1.0f, 0.0f));  // up vector
     glUniformMatrix4fv(glGetUniformLocation(shadowMapShader, "lightTransform"),
                        1, GL_FALSE, glm::value_ptr(lightTransform));
@@ -406,20 +407,7 @@ void render()
     glm::vec3 cameraPosition = camera.toCartesian();
 
     // get a "forward" vector for controlling the light position
-    glm::vec3 lightForward = glm::normalize(glm::vec3(-cameraPosition.x, 0.0f, -cameraPosition.z));
 
-    if (glfwGetKey(pWindow, GLFW_KEY_I) == GLFW_PRESS)
-        lightPosition += lightForward * translationAmount;
-    if (glfwGetKey(pWindow, GLFW_KEY_K) == GLFW_PRESS)
-        lightPosition -= lightForward * translationAmount;
-    if (glfwGetKey(pWindow, GLFW_KEY_J) == GLFW_PRESS)
-        lightPosition -= glm::cross(lightForward, glm::vec3(0.0f, 1.0f, 0.0f)) * translationAmount;
-    if (glfwGetKey(pWindow, GLFW_KEY_L) == GLFW_PRESS)
-        lightPosition += glm::cross(lightForward, glm::vec3(0.0f, 1.0f, 0.0f)) * translationAmount;
-    if (glfwGetKey(pWindow, GLFW_KEY_U) == GLFW_PRESS)
-        lightPosition -= glm::vec3(0.0f, 1.0f, 0.0f) * translationAmount;
-    if (glfwGetKey(pWindow, GLFW_KEY_O) == GLFW_PRESS)
-        lightPosition += glm::vec3(0.0f, 1.0f, 0.0f) * translationAmount;
 
     ///////////////////////////////////////////////////////////////////////////
     // draw the shadow map
@@ -458,6 +446,8 @@ void render()
     // ... set up the light position...
     glUniform3fv(glGetUniformLocation(shader, "lightPosition"),
                  1, glm::value_ptr(lightPosition));
+    glUniform3fv(glGetUniformLocation(shader, "lightDirection"),
+                 1, glm::value_ptr(lightDirection));
 
     ///////////////////////////////////////////////////////////////////////////
     // ... set up the light transformation (for looking up the shadow map)...

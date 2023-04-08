@@ -10,7 +10,12 @@
 in vec3 shaderPosition;
 in mat3 shaderTBN;
 in vec2 shaderTexCoord;
+
 in vec3 shaderLightPosition;
+in vec3 shaderLightDirection;
+in float shaderLightConeAngle;
+in float shaderLightOuterConeAngle;
+
 uniform sampler2D diffuseMap;
 uniform sampler2D normalMap;
 out vec4 fragmentColor;
@@ -54,9 +59,12 @@ void main()
     // define some constant properties for the light
     // (you should really be passing these parameters into the shader as uniform vars instead)
     vec3 lightColor = vec3(1.0f, 1.0f, 1.0f);  // diffuse
-    float ambientIntensity = 0.15f;            // ambient
+    float ambientIntensity = 0.05f;            // ambient
     float specularIntensity = 0.5f;            // specular (better implementation: look this up from a specular map!)
     float specularPower = 32.0f;               // specular exponent
+
+    float spotCutoff = 0.1f;
+    float spotBlend = 0.1f;
 
     // look up the normal from the normal map, then reorient it with the current model transform via the TBN matrix
     vec3 textureNormal = vec3(texture(normalMap, shaderTexCoord));
@@ -65,15 +73,20 @@ void main()
 
     // calculate ambient
     vec3 lightAmbient = lightColor * ambientIntensity;
-
+    
     // calculate diffuse
     vec3 lightDir = normalize(shaderLightPosition - shaderPosition);
     vec3 lightDiffuse = max(dot(normalDir, lightDir), 0.0f) * lightColor;
 
-    // calculate specular
-    vec3 viewDir = normalize(-shaderPosition);
-    vec3 reflectDir = reflect(-lightDir, normalDir);
-    vec3 lightSpecular = pow(max(dot(reflectDir, viewDir), 0), specularPower) * lightColor * specularIntensity;
+    // calculate spotlight attenuation
+    vec3 coneDir = normalize(-shaderLightPosition);
+    float spotFactor = dot(coneDir, normalize(-lightDir));
+    float spotAttenuation = smoothstep(spotCutoff - spotBlend, spotCutoff, spotFactor);
+
+    // apply spotlight attenuation to diffuse and specular
+    lightDiffuse *= spotAttenuation;
+    vec3 lightSpecular = pow(max(dot(reflect(-lightDir, normalDir), normalize(-shaderPosition)), 0.0), specularPower) * lightColor * specularIntensity;
+    lightSpecular *= spotAttenuation;
 
     ///////////////////////////////////////////////////////////////////////////
     // zero-out the diffuse and specular components if the fragment is in shadow
