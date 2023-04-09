@@ -16,7 +16,7 @@
 
 // change this to your desired window attributes
 #define WINDOW_WIDTH  640
-#define WINDOW_HEIGHT 360
+#define WINDOW_HEIGHT 640
 #define PI 3.14
 #define WINDOW_TITLE  "Hello Shadows (use WASDQE keys for camera, IKJLUO keys for light)"
 GLFWwindow *pWindow;
@@ -187,7 +187,8 @@ polar camera;
 glm::vec3 lightPosition = glm::vec3(-5.0f, 3.0f, 5.0f);
 glm::vec3 lightDirection = glm::vec3(0.0f, -1.0f, 1.0f);
 double previousTime = 0.0;
-
+int isShadowsOn = 1; 
+glm::mat4 lightTransform;
 ///////////////////////////////////////////////////////////////////////////////
 // SHADOW MAPPING CODE
 
@@ -325,6 +326,8 @@ bool setup()
     // enable z-buffer depth testing and face culling
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+
 
     ///////////////////////////////////////////////////////////////////////////
     // setup shadow rendering
@@ -411,7 +414,32 @@ void render()
 
     ///////////////////////////////////////////////////////////////////////////
     // draw the shadow map
-    glm::mat4 lightTransform = renderShadowMap();
+
+    if (glfwGetKey(pWindow, GLFW_KEY_X) == GLFW_PRESS)
+    {
+        if (isShadowsOn == 1 && glfwGetKey(pWindow, GLFW_KEY_X) == GLFW_RELEASE)
+        {
+            isShadowsOn = 0;
+        }
+        else if (isShadowsOn == 0 && glfwGetKey(pWindow, GLFW_KEY_X) == GLFW_RELEASE)
+        {
+            isShadowsOn = 1;
+            
+        }
+    }
+
+    if (isShadowsOn == 1)
+    {
+        lightTransform = renderShadowMap();
+        std::cout << "Shadows ON\n";
+    }
+    else if (isShadowsOn == 0)
+    {
+        std::cout << "Shadows OFF\n";
+    }
+
+
+   // std::cout << "IsShadowON = " << isShadowsOn << "\n";
     ///////////////////////////////////////////////////////////////////////////
 
     // clear the whole frame
@@ -420,6 +448,17 @@ void render()
 
     // using our shader program...
     glUseProgram(shader);
+    
+    std::cout << "Int isShadowsOn  "<< isShadowsOn <<"\n";
+    glUniform1i(glGetUniformLocation(shader, "isShadowsOn"), isShadowsOn);
+    GLenum error = glGetError();
+    if (error != GL_NO_ERROR)
+    {
+        std::cerr << "OpenGL error: " << error << std::endl;
+    }
+    int isShadowOnValue;
+    glGetUniformiv(shader,glGetUniformLocation(shader, "isShadowsOn"), &isShadowOnValue); // get the value of the uniform
+    std::cout << "shaderIsShadowOn value: " << isShadowOnValue << std::endl;
 
     // ... set up the projection matrix...
     glm::mat4 projectionTransform;
@@ -451,18 +490,23 @@ void render()
 
     ///////////////////////////////////////////////////////////////////////////
     // ... set up the light transformation (for looking up the shadow map)...
-    glUniformMatrix4fv(glGetUniformLocation(shader, "lightTransform"),
-                       1, GL_FALSE, glm::value_ptr(lightTransform));
+    if (isShadowsOn == 1)
+    {
+        glUniformMatrix4fv(glGetUniformLocation(shader, "lightTransform"),
+                    1, GL_FALSE, glm::value_ptr(lightTransform));
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
+        glUniform1i(glGetUniformLocation(shader, "shadowMap"),  1);
+    }
 
     // ... set the active texture...
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture[0]);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
+
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, texture[1]);
     glUniform1i(glGetUniformLocation(shader, "diffuseMap"), 0);
-    glUniform1i(glGetUniformLocation(shader, "shadowMap"),  1);
+
     glUniform1i(glGetUniformLocation(shader, "normalMap"),  2);
     ///////////////////////////////////////////////////////////////////////////
 

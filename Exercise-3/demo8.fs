@@ -15,6 +15,7 @@ in vec3 shaderLightPosition;
 in vec3 shaderLightDirection;
 in float shaderLightConeAngle;
 in float shaderLightOuterConeAngle;
+uniform int isShadowsOn;
 
 uniform sampler2D diffuseMap;
 uniform sampler2D normalMap;
@@ -90,8 +91,10 @@ void main()
 
     ///////////////////////////////////////////////////////////////////////////
     // zero-out the diffuse and specular components if the fragment is in shadow
-    if (inShadow())
+    if (inShadow() && isShadowsOn == 1)
+    {
         lightDiffuse = lightSpecular = vec3(0.0f, 0.0f, 0.0f);
+    }
     ///////////////////////////////////////////////////////////////////////////
 
     // compute final fragment color
