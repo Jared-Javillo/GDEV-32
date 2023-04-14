@@ -18,7 +18,7 @@
 #define WINDOW_WIDTH  640
 #define WINDOW_HEIGHT 640
 #define PI 3.14
-#define WINDOW_TITLE  "Hello Shadows (use WASDQE keys for camera, IKJLUO keys for light)"
+#define WINDOW_TITLE  "Hello Shadows (PRESS X TO TURN OFF SHADOWS)"
 GLFWwindow *pWindow;
 
 // model
