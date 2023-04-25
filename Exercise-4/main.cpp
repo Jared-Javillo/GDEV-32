@@ -355,6 +355,7 @@ IntersectionInfo RayCast(const Ray& ray, const Scene& scene)
 glm::vec3 RayTrace(const Ray& ray, const Scene& scene, glm::vec3& cameraPos, int depth)
 {
     glm::vec3 color(0.0f);
+    glm::vec3 tempColor;
 
     // cast a ray into the scene
     IntersectionInfo intersect = RayCast(ray, scene);
@@ -381,7 +382,8 @@ glm::vec3 RayTrace(const Ray& ray, const Scene& scene, glm::vec3& cameraPos, int
                 lightDir = glm::normalize(light.position);
                 lightDistance = std::numeric_limits<float>::infinity();
             }
-
+            Ray shadowRay;
+            
             // ambient contribution
             glm::vec3 ambient = intersect.object->material.ambient * light.ambient;
 
@@ -397,7 +399,10 @@ glm::vec3 RayTrace(const Ray& ray, const Scene& scene, glm::vec3& cameraPos, int
             glm::vec3 specular = intersect.object->material.specular * (light.specular * specularFactor);
 
             // add up all the lighting contributions
-            color += ambient + diffuse + specular;
+            lightDistance = glm::clamp(lightDistance, 0.0f, 1000.0f);
+            float attenuation = 1.0f/(light.constant + light.linear *lightDistance + light.quadratic*(lightDistance*lightDistance));
+            tempColor = (ambient + diffuse + specular) * attenuation;
+            color += ambient + diffuse + specular + tempColor;
         }
 
     }
