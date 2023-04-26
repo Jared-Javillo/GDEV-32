@@ -355,7 +355,6 @@ IntersectionInfo RayCast(const Ray& ray, const Scene& scene)
 glm::vec3 RayTrace(const Ray& ray, const Scene& scene, glm::vec3& cameraPos, int depth)
 {
     glm::vec3 color(0.0f);
-    glm::vec3 tempColor;
 
     // cast a ray into the scene
     IntersectionInfo intersect = RayCast(ray, scene);
@@ -408,11 +407,20 @@ glm::vec3 RayTrace(const Ray& ray, const Scene& scene, glm::vec3& cameraPos, int
                 diffuse = glm::vec3{0,0,0};
                 specular = glm::vec3{0,0,0};
             }
+
+            //reflections
+            Ray reflectionRay;
+            glm::vec3 reflectedRayDirection = glm::reflect(ray.direction, intersect.intersectionNormal);
+            reflectionRay.origin = intersect.intersectionPoint + intersect.intersectionNormal;
+            reflectionRay.direction = reflectedRayDirection;
+            glm::vec3 reflectedColor = RayTrace(reflectionRay, scene, cameraPos, depth + 1);
+            float reflectionCoefficient = (float) intersect.object->material.shininess/128;
+
             // add up all the lighting contributions
             lightDistance = glm::clamp(lightDistance, 0.0f, 1000.0f);
             float attenuation = 1.0f/(light.constant + light.linear *lightDistance + light.quadratic*(lightDistance*lightDistance));
-            tempColor = (ambient + diffuse + specular) * attenuation;
-            color += ambient + diffuse + specular + tempColor;
+            color += (ambient + diffuse + specular) + reflectedColor*reflectionCoefficient;
+            color *= attenuation;
         }
 
     }
