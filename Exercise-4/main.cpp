@@ -396,7 +396,7 @@ glm::vec3 RayTrace(const Ray& ray, const Scene& scene, glm::vec3& cameraPos, int
 
             // specular contribution
             glm::vec3 viewDir = glm::normalize(ray.origin - intersect.intersectionPoint);
-            glm::vec3 reflectDir = glm::reflect(-lightDir, intersect.intersectionPoint);
+            glm::vec3 reflectDir = glm::reflect(lightDir, intersect.intersectionPoint);
             float specularFactor = glm::max(glm::dot(reflectDir,viewDir), 0.0f);
             specularFactor = glm::pow(specularFactor, intersect.object->material.shininess);
             glm::vec3 specular = intersect.object->material.specular * (light.specular * specularFactor);
