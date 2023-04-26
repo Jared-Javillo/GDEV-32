@@ -383,6 +383,9 @@ glm::vec3 RayTrace(const Ray& ray, const Scene& scene, glm::vec3& cameraPos, int
                 lightDistance = std::numeric_limits<float>::infinity();
             }
             Ray shadowRay;
+            shadowRay.origin = (intersect.intersectionPoint + intersect.intersectionNormal*0.001f);
+            shadowRay.direction = lightDir;
+            IntersectionInfo shadow = RayCast(shadowRay, scene);
             
             // ambient contribution
             glm::vec3 ambient = intersect.object->material.ambient * light.ambient;
@@ -397,7 +400,14 @@ glm::vec3 RayTrace(const Ray& ray, const Scene& scene, glm::vec3& cameraPos, int
             float specularFactor = glm::max(glm::dot(reflectDir,viewDir), 0.0f);
             specularFactor = glm::pow(specularFactor, intersect.object->material.shininess);
             glm::vec3 specular = intersect.object->material.specular * (light.specular * specularFactor);
-
+            if (shadow.object == nullptr && light.position.w == 1) {
+                diffuse = glm::vec3{0,0,0};
+                specular = glm::vec3{0,0,0};
+            }
+            else if (shadow.object == nullptr && light.position.w == 0) {
+                diffuse = glm::vec3{0,0,0};
+                specular = glm::vec3{0,0,0};
+            }
             // add up all the lighting contributions
             lightDistance = glm::clamp(lightDistance, 0.0f, 1000.0f);
             float attenuation = 1.0f/(light.constant + light.linear *lightDistance + light.quadratic*(lightDistance*lightDistance));
