@@ -12,12 +12,71 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <gdev.h>
+#include "../camera.h"
 
 // change this to your desired window attributes
 #define WINDOW_WIDTH  640
 #define WINDOW_HEIGHT 360
 #define WINDOW_TITLE  "Hello Shadows (use WASDQE keys for camera, IKJLUO keys for light)"
 GLFWwindow *pWindow;
+
+// camera
+Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
+float lastX = WINDOW_WIDTH / 2.0f;
+float lastY = WINDOW_HEIGHT / 2.0f;
+bool firstMouse = true;
+
+// timing
+float deltaTime = 0.0f;	// time between current frame and last frame
+float lastFrame = 0.0f;
+
+// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
+// ---------------------------------------------------------------------------------------------------------
+void processInput(GLFWwindow *window)
+{
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.ProcessKeyboard(FORWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.ProcessKeyboard(LEFT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.ProcessKeyboard(RIGHT, deltaTime);
+}
+
+// glfw: whenever the mouse moves, this callback is called
+// -------------------------------------------------------
+void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
+{
+    float xpos = static_cast<float>(xposIn);
+    float ypos = static_cast<float>(yposIn);
+
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+    lastX = xpos;
+    lastY = ypos;
+
+    camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+// glfw: whenever the mouse scroll wheel scrolls, this callback is called
+// ----------------------------------------------------------------------
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    camera.ProcessMouseScroll(static_cast<float>(yoffset));
+}
+
 
 // model
 float vertices[] =
@@ -124,8 +183,6 @@ struct polar
     }
 };
 
-// variables for tracking camera and light position
-polar camera;
 glm::vec3 lightPosition = glm::vec3(-5.0f, 3.0f, 5.0f);
 double previousTime = 0.0;
 
@@ -161,7 +218,7 @@ bool setupShadowMap()
     }
 
     // load the shader program for drawing the shadow map
-    shadowMapShader = gdevLoadShader("demo8s.vs", "demo8s.fs");
+    shadowMapShader = gdevLoadShader("finals_s.vs", "finals_s.fs");
     if (! shadowMapShader)
         return false;
 
@@ -170,7 +227,7 @@ bool setupShadowMap()
     return true;
 }
 
-glm::mat4 renderShadowMap()
+glm::mat4 renderShadowMap(glm::vec3 lightPos)
 {
     // use the shadow framebuffer for drawing the shadow map
     glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFbo);
@@ -190,11 +247,12 @@ glm::mat4 renderShadowMap()
     // vector should be set to your spotlight's outer radius and focus point,
     // respectively)
     glm::mat4 lightTransform;
+    std::cout << lightPos.x << " : " << lightPos.x << " : " << lightPos.z << std::endl;
     lightTransform = glm::perspective(glm::radians(90.0f),       // fov
                                       1.0f,                      // aspect ratio
                                       0.1f,                      // near plane
                                       100.0f);                   // far plane
-    lightTransform *= glm::lookAt(lightPosition,                 // eye position
+    lightTransform *= glm::lookAt(lightPos,                 // eye position
                                   glm::vec3(0.0f, 0.0f, 0.0f),   // center position
                                   glm::vec3(0.0f, 1.0f, 0.0f));  // up vector
     glUniformMatrix4fv(glGetUniformLocation(shadowMapShader, "lightTransform"),
@@ -242,12 +300,12 @@ bool setup()
     glEnableVertexAttribArray(2);
 
     // load our shader program
-    shader = gdevLoadShader("demo8.vs", "demo8.fs");
+    shader = gdevLoadShader("finals.vs", "finals.fs");
     if (! shader)
         return false;
 
     // load our texture
-    texture = gdevLoadTexture("demo5.png", GL_REPEAT, true, true);
+    texture = gdevLoadTexture("finals.png", GL_REPEAT, true, true);
     if (! texture)
         return false;
 
@@ -268,51 +326,16 @@ bool setup()
 void render()
 {
     // find the elapsed time since the last frame
-    double currentTime = glfwGetTime();
-    double elapsedTime = (currentTime - previousTime);
-    previousTime = currentTime;
+    float currentFrame = static_cast<float>(glfwGetTime());
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
 
-    // define how much to rotate and translate according to time
-    float rotationAmount = 100.0f * elapsedTime;
-    float translationAmount = 10.0f * elapsedTime;
+    processInput(pWindow);
 
-    // handle key events for camera
-    if (glfwGetKey(pWindow, GLFW_KEY_W) == GLFW_PRESS)
-        camera.radius -= translationAmount;
-    if (glfwGetKey(pWindow, GLFW_KEY_S) == GLFW_PRESS)
-        camera.radius += translationAmount;
-    if (glfwGetKey(pWindow, GLFW_KEY_A) == GLFW_PRESS)
-        camera.azimuth -= rotationAmount;
-    if (glfwGetKey(pWindow, GLFW_KEY_D) == GLFW_PRESS)
-        camera.azimuth += rotationAmount;
-    if (glfwGetKey(pWindow, GLFW_KEY_Q) == GLFW_PRESS)
-        camera.inclination += rotationAmount;
-    if (glfwGetKey(pWindow, GLFW_KEY_E) == GLFW_PRESS)
-        camera.inclination -= rotationAmount;
-    camera.clamp();
-
-    // get the Cartesian coordinates of the camera
-    glm::vec3 cameraPosition = camera.toCartesian();
-
-    // get a "forward" vector for controlling the light position
-    glm::vec3 lightForward = glm::normalize(glm::vec3(-cameraPosition.x, 0.0f, -cameraPosition.z));
-
-    if (glfwGetKey(pWindow, GLFW_KEY_I) == GLFW_PRESS)
-        lightPosition += lightForward * translationAmount;
-    if (glfwGetKey(pWindow, GLFW_KEY_K) == GLFW_PRESS)
-        lightPosition -= lightForward * translationAmount;
-    if (glfwGetKey(pWindow, GLFW_KEY_J) == GLFW_PRESS)
-        lightPosition -= glm::cross(lightForward, glm::vec3(0.0f, 1.0f, 0.0f)) * translationAmount;
-    if (glfwGetKey(pWindow, GLFW_KEY_L) == GLFW_PRESS)
-        lightPosition += glm::cross(lightForward, glm::vec3(0.0f, 1.0f, 0.0f)) * translationAmount;
-    if (glfwGetKey(pWindow, GLFW_KEY_U) == GLFW_PRESS)
-        lightPosition -= glm::vec3(0.0f, 1.0f, 0.0f) * translationAmount;
-    if (glfwGetKey(pWindow, GLFW_KEY_O) == GLFW_PRESS)
-        lightPosition += glm::vec3(0.0f, 1.0f, 0.0f) * translationAmount;
-
+    glm::vec3 lightPosition = camera.Position + camera.Front * 1.0f;
     ///////////////////////////////////////////////////////////////////////////
     // draw the shadow map
-    glm::mat4 lightTransform = renderShadowMap();
+    glm::mat4 lightTransform = renderShadowMap(lightPosition);
     ///////////////////////////////////////////////////////////////////////////
 
     // clear the whole frame
@@ -333,9 +356,7 @@ void render()
 
     // ... set up the view matrix...
     glm::mat4 viewTransform;
-    viewTransform = glm::lookAt(cameraPosition,                // eye position
-                                glm::vec3(0.0f, 0.0f, 0.0f),   // center position
-                                glm::vec3(0.0f, 1.0f, 0.0f));  // up vector
+    viewTransform = camera.GetViewMatrix();  // up vector
     glUniformMatrix4fv(glGetUniformLocation(shader, "viewTransform"),
                        1, GL_FALSE, glm::value_ptr(viewTransform));
 
@@ -413,9 +434,11 @@ int main(int argc, char** argv)
     // set up callback functions to handle window system events
     glfwSetKeyCallback(pWindow, handleKeys);
     glfwSetFramebufferSizeCallback(pWindow, handleResize);
+    glfwSetCursorPosCallback(pWindow, mouse_callback);
+    glfwSetScrollCallback(pWindow, scroll_callback);
 
-    // don't miss any momentary keypresses
-    glfwSetInputMode(pWindow, GLFW_STICKY_KEYS, GLFW_TRUE);
+    // Mouse Input
+    glfwSetInputMode(pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // initialize GLAD, which acts as a library loader for the current OS's native OpenGL library
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
