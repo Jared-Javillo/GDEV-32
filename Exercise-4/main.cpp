@@ -355,7 +355,8 @@ IntersectionInfo RayCast(const Ray& ray, const Scene& scene)
 glm::vec3 RayTrace(const Ray& ray, const Scene& scene, glm::vec3& cameraPos, int depth)
 {
     glm::vec3 color(0.0f);
-
+    glm::vec3 reflectedColor;
+    
     // cast a ray into the scene
     IntersectionInfo intersect = RayCast(ray, scene);
 
@@ -363,9 +364,9 @@ glm::vec3 RayTrace(const Ray& ray, const Scene& scene, glm::vec3& cameraPos, int
     if (intersect.object != nullptr)
     {
         // loop through all light sources
-        for ( auto& light : scene.lights)
+        for (auto& light : scene.lights)
         {
-            glm::vec3 lightPos = glm::vec3{light.position.x, light.position.y, light.position.z}; 
+            glm::vec3 lightPos = glm::vec3{ light.position.x, light.position.y, light.position.z };
             glm::vec3 lightDir;
             float lightDistance;
 
@@ -381,50 +382,59 @@ glm::vec3 RayTrace(const Ray& ray, const Scene& scene, glm::vec3& cameraPos, int
                 lightDir = glm::normalize(light.position);
                 lightDistance = std::numeric_limits<float>::infinity();
             }
+
+            // cast shadow ray from intersection point to light source
             Ray shadowRay;
-            shadowRay.origin = (intersect.intersectionPoint + intersect.intersectionNormal*0.001f);
-            shadowRay.direction = lightDir;
-            IntersectionInfo shadow = RayCast(shadowRay, scene);
+            shadowRay.origin = intersect.intersectionPoint + (intersect.intersectionNormal * 0.0001f);
+            shadowRay.direction = -lightDir;
+            IntersectionInfo shadowIntersect = RayCast(shadowRay, scene);
+
             
             // ambient contribution
             glm::vec3 ambient = intersect.object->material.ambient * light.ambient;
 
+            // check for intersection along shadow ray
+            if (shadowIntersect.object != nullptr && shadowIntersect.object != intersect.object)
+            {
+                // there is an intersection along shadow ray, nullify diffuse and specular contributions
+                color += (ambient);
+                continue; // skip to the next light source
+            }
+
             // diffuse contribution
-            float diffuseFactor = glm::max(glm::dot(-lightDir,intersect.intersectionNormal), 0.0f);
+            float diffuseFactor = glm::max(glm::dot(-lightDir, intersect.intersectionNormal), 0.0f);
             glm::vec3 diffuse = intersect.object->material.diffuse * light.diffuse * diffuseFactor;
 
             // specular contribution
             glm::vec3 viewDir = glm::normalize(ray.origin - intersect.intersectionPoint);
-            glm::vec3 reflectDir = glm::reflect(lightDir, intersect.intersectionPoint);
-            float specularFactor = glm::max(glm::dot(reflectDir,viewDir), 0.0f);
+            glm::vec3 reflectDir = glm::reflect(lightDir, intersect.intersectionNormal);
+            float specularFactor = glm::max(glm::dot(reflectDir, viewDir), 0.0f);
             specularFactor = glm::pow(specularFactor, intersect.object->material.shininess);
             glm::vec3 specular = intersect.object->material.specular * (light.specular * specularFactor);
-            if (shadow.object == nullptr && light.position.w == 1) {
-                diffuse = glm::vec3{0,0,0};
-                specular = glm::vec3{0,0,0};
-            }
-            else if (shadow.object == nullptr && light.position.w == 0) {
-                diffuse = glm::vec3{0,0,0};
-                specular = glm::vec3{0,0,0};
-            }
-
-            //reflections
-            Ray reflectionRay;
-            glm::vec3 reflectedRayDirection = glm::reflect(ray.direction, intersect.intersectionNormal);
-            reflectionRay.origin = intersect.intersectionPoint + intersect.intersectionNormal;
-            reflectionRay.direction = reflectedRayDirection;
-            glm::vec3 reflectedColor = RayTrace(reflectionRay, scene, cameraPos, depth + 1);
-            float reflectionCoefficient = (float) intersect.object->material.shininess/128;
 
             // add up all the lighting contributions
             lightDistance = glm::clamp(lightDistance, 0.0f, 1000.0f);
-            float attenuation = 1.0f/(light.constant + light.linear *lightDistance + light.quadratic*(lightDistance*lightDistance));
-            color += (ambient + diffuse + specular) + reflectedColor*reflectionCoefficient;
+            float attenuation = 1.0f / (light.constant + light.linear * lightDistance + light.quadratic * (lightDistance * lightDistance));
+            color += (ambient + diffuse + specular);
+
             color *= attenuation;
         }
 
-    }
+        // handle reflection
+        if (depth > 0 && intersect.object->material.shininess > 0.0f)
+        {
+            glm::vec3 reflectDir = glm::reflect(ray.direction, intersect.intersectionNormal + 0.0001f);
+            // cast reflection ray
+            Ray reflectedRay;
+            reflectedRay.origin = intersect.intersectionPoint + (reflectDir);
+            reflectedRay.direction = reflectDir;
+            reflectedColor = RayTrace(reflectedRay, scene, cameraPos, depth - 1);
 
+            // add reflected color to final color
+            color += reflectedColor * intersect.object->material.shininess * 0.01f;
+            
+        }
+    }
     return color;
 }
 
