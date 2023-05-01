@@ -31,7 +31,18 @@ float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
 glm::mat4 centerCubeTransform = glm::mat4(1.0f);
+glm::mat4 tableTransform = glm::mat4(1.0f);
+glm::mat4 chairOneTransform = glm::mat4(1.0f);
+glm::mat4 chairTwoTransform = glm::mat4(1.0f);
 glm::mat4 lanternCubeTransform = glm::mat4(1.0f);
+glm::mat4 treeTransformA = glm::mat4(1.0f);
+glm::mat4 treeTransformB = glm::mat4(1.0f);
+glm::mat4 treeTransformC = glm::mat4(1.0f);
+glm::mat4 treeTransformD = glm::mat4(1.0f);
+glm::mat4 treeTransformE = glm::mat4(1.0f);
+glm::mat4 treeTransformF = glm::mat4(1.0f);
+glm::mat4 treeTransformG = glm::mat4(1.0f);
+glm::mat4 treeTransformH = glm::mat4(1.0f);
  
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
@@ -953,15 +964,53 @@ glm::mat4 renderShadowMap(glm::vec3 lightPos)
                     1, GL_FALSE, glm::value_ptr(centerCubeTransform));
     glBindVertexArray(vaoCube);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesCube) / (8 * sizeof(float)));
+
+    glUniformMatrix4fv(glGetUniformLocation(shadowMapShader, "modelTransform"),
+                    1, GL_FALSE, glm::value_ptr(tableTransform));
     glBindVertexArray(vaoTable);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesTable) / (8 * sizeof(float)));
+
+    glUniformMatrix4fv(glGetUniformLocation(shadowMapShader, "modelTransform"),
+                    1, GL_FALSE, glm::value_ptr(chairOneTransform));
     glBindVertexArray(vaoChair);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesChair) / (8 * sizeof(float)));
-    glBindVertexArray(vaoTree);
+    
+    glUniformMatrix4fv(glGetUniformLocation(shadowMapShader, "modelTransform"),
+                    1, GL_FALSE, glm::value_ptr(chairTwoTransform));
+    glBindVertexArray(vaoChair);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesChair) / (8 * sizeof(float)));
+
+    glUniformMatrix4fv(glGetUniformLocation(shadowMapShader, "modelTransform"),
+                    1, GL_FALSE, glm::value_ptr(treeTransformA));
+    glBindVertexArray(vaoTree);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesTree) / (8 * sizeof(float)));
+
+    glBindVertexArray(vaoLeaves);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesLeaves) / (8 * sizeof(float)));
+
+    glUniformMatrix4fv(glGetUniformLocation(shadowMapShader, "modelTransform"),
+                    1, GL_FALSE, glm::value_ptr(treeTransformB));
+    glBindVertexArray(vaoTree);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesTree) / (8 * sizeof(float)));
+
     glBindVertexArray(vaoLeaves);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesLeaves) / (8 * sizeof(float)));
     
+    glUniformMatrix4fv(glGetUniformLocation(shadowMapShader, "modelTransform"),
+                    1, GL_FALSE, glm::value_ptr(treeTransformC));
+    glBindVertexArray(vaoTree);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesTree) / (8 * sizeof(float)));
+
+    glBindVertexArray(vaoLeaves);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesLeaves) / (8 * sizeof(float)));
+    
+    glUniformMatrix4fv(glGetUniformLocation(shadowMapShader, "modelTransform"),
+                    1, GL_FALSE, glm::value_ptr(treeTransformD));
+    glBindVertexArray(vaoTree);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesTree) / (8 * sizeof(float)));
+
+    glBindVertexArray(vaoLeaves);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesLeaves) / (8 * sizeof(float)));
 
     // set the framebuffer back to the default onscreen buffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -1173,25 +1222,68 @@ void render()
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture[2]);
 
-    modelTransform = glm::translate(modelTransform, glm::vec3(5.0f,0.0f,0.0f));
     glUniformMatrix4fv(glGetUniformLocation(shader, "modelTransform"),
-                       1, GL_FALSE, glm::value_ptr(modelTransform));
+                       1, GL_FALSE, glm::value_ptr(tableTransform));
     glBindVertexArray(vaoTable);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesTable) / (8 * sizeof(float)));
-    modelTransform = glm::translate(modelTransform, glm::vec3(-2.5f,0.0f,2.0f));
+
     glUniformMatrix4fv(glGetUniformLocation(shader, "modelTransform"),
-                       1, GL_FALSE, glm::value_ptr(modelTransform));
+                       1, GL_FALSE, glm::value_ptr(chairOneTransform));
     glBindVertexArray(vaoChair);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesChair) / (8 * sizeof(float)));
-    modelTransform = glm::translate(modelTransform, glm::vec3(0.0f,0.0f,-4.0f));
+
     glUniformMatrix4fv(glGetUniformLocation(shader, "modelTransform"),
-                       1, GL_FALSE, glm::value_ptr(modelTransform));
+                       1, GL_FALSE, glm::value_ptr(chairTwoTransform));
     glBindVertexArray(vaoChair);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesChair) / (8 * sizeof(float)));
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture[3]);
 
+    glUniformMatrix4fv(glGetUniformLocation(shader, "modelTransform"),
+                       1, GL_FALSE, glm::value_ptr(treeTransformA));
+    glBindVertexArray(vaoTree);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesTree) / (8 * sizeof(float)));
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture[4]);
+
+    glBindVertexArray(vaoLeaves);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesLeaves) / (8 * sizeof(float)));
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture[3]);
+
+    glUniformMatrix4fv(glGetUniformLocation(shader, "modelTransform"),
+                       1, GL_FALSE, glm::value_ptr(treeTransformB));
+    glBindVertexArray(vaoTree);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesTree) / (8 * sizeof(float)));
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture[4]);
+
+    glBindVertexArray(vaoLeaves);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesLeaves) / (8 * sizeof(float)));
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture[3]);
+
+    glUniformMatrix4fv(glGetUniformLocation(shader, "modelTransform"),
+                       1, GL_FALSE, glm::value_ptr(treeTransformC));
+    glBindVertexArray(vaoTree);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesTree) / (8 * sizeof(float)));
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture[4]);
+
+    glBindVertexArray(vaoLeaves);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesLeaves) / (8 * sizeof(float)));
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture[3]);
+
+    glUniformMatrix4fv(glGetUniformLocation(shader, "modelTransform"),
+                       1, GL_FALSE, glm::value_ptr(treeTransformD));
     glBindVertexArray(vaoTree);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesTree) / (8 * sizeof(float)));
 
@@ -1275,6 +1367,20 @@ int main(int argc, char** argv)
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 
     centerCubeTransform[3][1] -= 1.0f;
+    tableTransform[3][0] += 5.0f;
+    chairOneTransform[3][0] += 2.5f;
+    chairOneTransform[3][2] += 2.0f;
+    chairTwoTransform[3][0] += 2.5f;
+    chairTwoTransform[3][2] -= 2.0f;
+    treeTransformA[3][0] += 6.0f;
+    treeTransformA[3][2] -= 5.0f;
+    treeTransformB[3][0] += 3.0f;
+    treeTransformB[3][2] -= 5.0f;
+    treeTransformC[3][0] += 0.0f;
+    treeTransformC[3][2] -= 5.0f;
+    treeTransformD[3][0] -= 3.0f;
+    treeTransformD[3][2] -= 5.0f;
+
     // if our initial setup is successful...
     if (setup())
     {
