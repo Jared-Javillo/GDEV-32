@@ -581,6 +581,102 @@ float vertices[] =
    Xmin+3.00f, LegHeightBot, Zmax-0.75f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
    Xmin+3.00f,  LegHeightTop-0.25f,  Zmin-0.75f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
    Xmin+3.00f,  LegHeightTop-0.25f, Zmax-0.75f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+//TREES
+   // cube top
+    Xmin+5.00f,  LegHeightTop+4.00f, Zmin+1.00f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+5.00f,  LegHeightTop+4.00f, Zmin+1.00f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+    Xmax+5.00f,  LegHeightTop+4.00f, Zmax+1.00f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+    Xmin+5.00f,  LegHeightTop+4.00f, Zmin+1.00f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+5.00f,  LegHeightTop+4.00f, Zmax+1.00f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+    Xmin+5.00f,  LegHeightTop+4.00f, Zmax+1.00f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+
+    // cube bottom
+    Xmin+5.00f, LegHeightBot, Zmax+1.00f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+5.00f, LegHeightBot, Zmax+1.00f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+    Xmax+5.00f, LegHeightBot, Zmin+1.00f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+    Xmin+5.00f, LegHeightBot, Zmax+1.00f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+5.00f, LegHeightBot, Zmin+1.00f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+    Xmin+5.00f, LegHeightBot, Zmin+1.00f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+
+    // cube front
+    Xmin+5.00f, LegHeightBot,  Zmin+1.00f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
+    Xmax+5.00f, LegHeightBot,        Zmin+1.00f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
+    Xmax+5.00f, LegHeightTop+4.00f,  Zmin+1.00f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
+    Xmin+5.00f, LegHeightBot,  Zmin+1.00f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
+    Xmax+5.00f, LegHeightTop+4.00f,  Zmin+1.00f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
+    Xmin+5.00f, LegHeightTop+4.00f,  Zmin+1.00f,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
+
+    // cube back
+    Xmax+5.00f, LegHeightBot, Zmax+1.00f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+    Xmin+5.00f, LegHeightBot, Zmax+1.00f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+    Xmin+5.00f, LegHeightTop+4.00f, Zmax+1.00f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+    Xmax+5.00f, LegHeightBot, Zmax+1.00f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+    Xmin+5.00f, LegHeightTop+4.00f, Zmax+1.00f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+    Xmax+5.00f, LegHeightTop+4.00f, Zmax+1.00f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+
+    // cube right
+    Xmax+5.00f, LegHeightBot,       Zmin+1.00f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+5.00f, LegHeightBot,       Zmax+1.00f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+    Xmax+5.00f, LegHeightTop+4.00f, Zmax+1.00f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+    Xmax+5.00f, LegHeightBot,       Zmin+1.00f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+5.00f, LegHeightTop+4.00f, Zmax+1.00f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+    Xmax+5.00f, LegHeightTop+4.00f, Zmin+1.00f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+
+    // cube left
+   Xmin+5.00f, LegHeightBot, Zmax+1.00f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+   Xmin+5.00f, LegHeightBot, Zmin+1.00f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+   Xmin+5.00f,  LegHeightTop+4.00f, Zmin+1.00f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+   Xmin+5.00f, LegHeightBot, Zmax+1.00f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+   Xmin+5.00f,  LegHeightTop+4.00f,  Zmin+1.00f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+   Xmin+5.00f,  LegHeightTop+4.00f, Zmax+1.00f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+   //
+   // cube top
+    Xmin+6.00f,  LegHeightTop+4.00f,  Zmin+1.00f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+6.00f,  LegHeightTop+4.00f,  Zmin+1.00f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+    Xmax+6.00f,  LegHeightTop+4.00f, Zmax+1.00f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+    Xmin+6.00f,  LegHeightTop+4.00f,  Zmin+1.00f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+6.00f,  LegHeightTop+4.00f, Zmax+1.00f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+    Xmin+6.00f,  LegHeightTop+4.00f, Zmax+1.00f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+
+    // cube bottom
+    Xmin+6.00f, LegHeightBot, Zmax+1.00f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+6.00f, LegHeightBot, Zmax+1.00f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+    Xmax+6.00f, LegHeightBot,  Zmin+1.00f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+    Xmin+6.00f, LegHeightBot, Zmax+1.00f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+6.00f, LegHeightBot,  Zmin+1.00f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+    Xmin+6.00f, LegHeightBot,  Zmin+1.00f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+
+    // cube front
+    Xmin+6.00f, LegHeightBot,  Zmin+1.00f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
+    Xmax+6.00f, LegHeightBot,  Zmin+1.00f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
+    Xmax+6.00f, LegHeightTop+4.00f,  Zmin+1.00f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
+    Xmin+6.00f, LegHeightBot,  Zmin+1.00f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
+    Xmax+6.00f, LegHeightTop+4.00f,  Zmin+1.00f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
+    Xmin+6.00f, LegHeightTop+4.00f,  Zmin+1.00f,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
+
+    // cube back
+    Xmax+6.00f, LegHeightBot, Zmax+1.00f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+    Xmin+6.00f, LegHeightBot, Zmax+1.00f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+    Xmin+6.00f, LegHeightTop+4.00f, Zmax+1.00f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+    Xmax+6.00f, LegHeightBot, Zmax+1.00f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+    Xmin+6.00f, LegHeightTop+4.00f, Zmax+1.00f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+    Xmax+6.00f, LegHeightTop+4.00f, Zmax+1.00f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+
+    // cube right
+    Xmax+6.00f, LegHeightBot,  Zmin+1.00f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+6.00f, LegHeightBot, Zmax+1.00f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+    Xmax+6.00f, LegHeightTop+4.00f, Zmax+1.00f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+    Xmax+6.00f, LegHeightBot,  Zmin+1.00f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+6.00f, LegHeightTop+4.00f, Zmax+1.00f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+    Xmax+6.00f, LegHeightTop+4.00f,  Zmin+1.00f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+
+    // cube left
+   Xmin+6.00f, LegHeightBot, Zmax+1.00f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+   Xmin+6.00f, LegHeightBot, Zmin+1.00f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+   Xmin+6.00f,  LegHeightTop+4.00f, Zmin+1.00f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+   Xmin+6.00f, LegHeightBot, Zmax+1.00f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+   Xmin+6.00f,  LegHeightTop+4.00f,  Zmin+1.00f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+   Xmin+6.00f,  LegHeightTop+4.00f, Zmax+1.00f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
 };
 
 // OpenGL object IDs
