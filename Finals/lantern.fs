@@ -12,7 +12,6 @@ in vec3 shaderNormal;
 in vec2 shaderTexCoord;
 in vec3 shaderLightPosition;
 uniform sampler2D diffuseMap;
-uniform int isLantern;
 out vec4 fragmentColor;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -54,13 +53,10 @@ void main()
     // define some constant properties for the light
     // (you should really be passing these parameters into the shader as uniform vars instead)
     vec3 lightColor = vec3(1.0f, 1.0f, 1.0f);  // diffuse
-    float ambientIntensity = 0.15f;            // ambient
-    float specularIntensity = 0.7f;            // specular (better implementation: look this up from a specular map!)
+    float ambientIntensity = 1.0f;            // ambient
+    float specularIntensity = 0.5f;            // specular (better implementation: look this up from a specular map!)
     float specularPower = 32.0f;               // specular exponent
 
-    if (isLantern == 1) {
-        ambientIntensity = 1.5f;  // increase the ambient intensity for the lantern
-    }
     // normalize the interpolated normal from the vertex shader
     // (lighting calculations will break if the normal direction is not a unit vector)
     vec3 normalDir = normalize(shaderNormal);
@@ -84,5 +80,5 @@ void main()
     ///////////////////////////////////////////////////////////////////////////
 
     // compute final fragment color
-    fragmentColor = vec4((lightAmbient + lightDiffuse + lightSpecular), 1.0f) * texture(diffuseMap, shaderTexCoord);
+    fragmentColor = vec4((lightAmbient), 1.0f) * texture(diffuseMap, shaderTexCoord);
 }

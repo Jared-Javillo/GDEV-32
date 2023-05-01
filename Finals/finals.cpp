@@ -30,6 +30,9 @@ bool firstMouse = true;
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
 
+glm::mat4 centerCubeTransform = glm::mat4(1.0f);
+glm::mat4 lanternCubeTransform = glm::mat4(1.0f);
+ 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window)
@@ -77,6 +80,20 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
     camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
 
+float rectangleVertices[] =
+{
+	// Coords    // texCoords
+	 1.0f, -1.0f,  1.0f, 0.0f,
+	-1.0f, -1.0f,  0.0f, 0.0f,
+	-1.0f,  1.0f,  0.0f, 1.0f,
+
+	 1.0f,  1.0f,  1.0f, 1.0f,
+	 1.0f, -1.0f,  1.0f, 0.0f,
+	-1.0f,  1.0f,  0.0f, 1.0f
+};
+
+
+unsigned int quadVAO, quadVBO, quadEBO;
 
 // model
 float vertices[] =
@@ -91,6 +108,57 @@ float vertices[] =
      8.00f, -2.00f, -8.00f,  0.0f,  1.0f,  0.0f,  4.0f, 4.0f,
     -8.00f, -2.00f, -8.00f,  0.0f,  1.0f,  0.0f,  0.0f, 4.0f,
 
+/*     // cube top
+    -1.00f,  1.00f,  1.00f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+     1.00f,  1.00f,  1.00f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+     1.00f,  1.00f, -1.00f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+    -1.00f,  1.00f,  1.00f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+     1.00f,  1.00f, -1.00f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+    -1.00f,  1.00f, -1.00f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+
+    // cube bottom
+    -1.00f, -1.00f, -1.00f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+     1.00f, -1.00f, -1.00f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+     1.00f, -1.00f,  1.00f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+    -1.00f, -1.00f, -1.00f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+     1.00f, -1.00f,  1.00f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+    -1.00f, -1.00f,  1.00f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+
+    // cube front
+    -1.00f, -1.00f,  1.00f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
+     1.00f, -1.00f,  1.00f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
+     1.00f,  1.00f,  1.00f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
+    -1.00f, -1.00f,  1.00f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
+     1.00f,  1.00f,  1.00f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
+    -1.00f,  1.00f,  1.00f,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
+
+    // cube back
+     1.00f, -1.00f, -1.00f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+    -1.00f, -1.00f, -1.00f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+    -1.00f,  1.00f, -1.00f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+     1.00f, -1.00f, -1.00f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+    -1.00f,  1.00f, -1.00f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+     1.00f,  1.00f, -1.00f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+
+    // cube right
+     1.00f, -1.00f,  1.00f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+     1.00f, -1.00f, -1.00f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+     1.00f,  1.00f, -1.00f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+     1.00f, -1.00f,  1.00f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+     1.00f,  1.00f, -1.00f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+     1.00f,  1.00f,  1.00f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+
+    // cube left
+    -1.00f, -1.00f, -1.00f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+    -1.00f, -1.00f,  1.00f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+    -1.00f,  1.00f,  1.00f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+    -1.00f, -1.00f, -1.00f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+    -1.00f,  1.00f,  1.00f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+    -1.00f,  1.00f, -1.00f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f */
+};
+
+float verticesCube[] =
+{
     // cube top
     -1.00f,  1.00f,  1.00f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
      1.00f,  1.00f,  1.00f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
@@ -141,51 +209,66 @@ float vertices[] =
 };
 
 // OpenGL object IDs
-GLuint vao;
-GLuint vbo;
-GLuint shader;
-GLuint texture;
-
-// helper struct for defining spherical polar coordinates
-struct polar
-{
-    float radius      =   8.0f;   // distance from the origin
-    float inclination = -20.0f;   // angle on the YZ vertical plane
-    float azimuth     =  45.0f;   // angle on the XZ horizontal plane
-
-    // sanity ranges to prevent strange behavior like flipping axes, etc.
-    // (you can change these as you see fit)
-    static constexpr float minRadius      =   0.1f;
-    static constexpr float maxRadius      =  20.0f;
-    static constexpr float minInclination = -89.0f;
-    static constexpr float maxInclination =  89.0f;
-
-    // restricts the coordinates to sanity ranges
-    void clamp()
-    {
-        if (radius < minRadius)
-            radius = minRadius;
-        if (radius > maxRadius)
-            radius = maxRadius;
-        if (inclination < minInclination)
-            inclination = minInclination;
-        if (inclination > maxInclination)
-            inclination = maxInclination;
-    }
-
-    // converts the spherical polar coordinates to a vec3 in Cartesian coordinates
-    glm::vec3 toCartesian()
-    {
-        glm::mat4 mat = glm::mat4(1.0f);  // set to identity first
-        mat = glm::rotate(mat, glm::radians(azimuth), glm::vec3(0.0f, 1.0f, 0.0f));
-        mat = glm::rotate(mat, glm::radians(inclination), glm::vec3(1.0f, 0.0f, 0.0f));
-        return mat * glm::vec4(0.0f, 0.0f, radius, 1.0f);
-    }
-};
+GLuint vao, vaoCube;
+GLuint vbo, vboCube;
+GLuint shader, lanternShader;
+GLuint texture[2];
 
 glm::vec3 lightPosition = glm::vec3(-5.0f, 3.0f, 5.0f);
 double previousTime = 0.0;
 
+GLuint fboShader;
+unsigned int FBO;
+unsigned int framebufferTexture;
+unsigned int RBO;
+unsigned int rectVAO, rectVBO;
+void SetupPostProcessing()
+{
+        // load our shader program
+        fboShader = gdevLoadShader("pp.vs", "pp.fs");
+        if (! fboShader)
+            return;
+        glUseProgram(fboShader);
+        glUniform1i(glGetUniformLocation(fboShader, "screenTexture"), 0);
+
+        // Prepare framebuffer rectangle VBO and VAO
+        glGenVertexArrays(1, &rectVAO);
+        glGenBuffers(1, &rectVBO);
+        glBindVertexArray(rectVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, rectVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(rectangleVertices), &rectangleVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+        // Create Frame Buffer Object
+        glGenFramebuffers(1, &FBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+        // Create Framebuffer Texture
+        glGenTextures(1, &framebufferTexture);
+        glBindTexture(GL_TEXTURE_2D, framebufferTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WINDOW_WIDTH, WINDOW_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // Prevents edge bleeding
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Prevents edge bleeding
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, framebufferTexture, 0); 
+
+        // Create Render Buffer Object
+        glGenRenderbuffers(1, &RBO);
+        glBindRenderbuffer(GL_RENDERBUFFER, RBO);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, WINDOW_WIDTH, WINDOW_HEIGHT);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
+
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+        // Error checking framebuffer
+        auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
+            std::cout << "Framebuffer error: " << fboStatus << std::endl;  
+}
 ///////////////////////////////////////////////////////////////////////////////
 // SHADOW MAPPING CODE
 
@@ -247,7 +330,7 @@ glm::mat4 renderShadowMap(glm::vec3 lightPos)
     // vector should be set to your spotlight's outer radius and focus point,
     // respectively)
     glm::mat4 lightTransform;
-    std::cout << lightPos.x << " : " << lightPos.x << " : " << lightPos.z << std::endl;
+
     lightTransform = glm::perspective(glm::radians(90.0f),       // fov
                                       1.0f,                      // aspect ratio
                                       0.1f,                      // near plane
@@ -266,6 +349,11 @@ glm::mat4 renderShadowMap(glm::vec3 lightPos)
     // ... then draw our triangles
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / (8 * sizeof(float)));
+
+    glUniformMatrix4fv(glGetUniformLocation(shadowMapShader, "modelTransform"),
+                    1, GL_FALSE, glm::value_ptr(centerCubeTransform));
+    glBindVertexArray(vaoCube);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesCube) / (8 * sizeof(float)));
 
     // set the framebuffer back to the default onscreen buffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -286,7 +374,7 @@ glm::mat4 renderShadowMap(glm::vec3 lightPos)
 // arrays, shader programs, etc.; returns true if successful, false otherwise
 bool setup()
 {
-    // upload the model to the GPU (explanations omitted for brevity)
+    // upload the model to the GPU (explanations omitted for brevity) Plane + Cube
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
     glBindVertexArray(vao);
@@ -299,14 +387,31 @@ bool setup()
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
 
+    // upload the model to the GPU (explanations omitted for brevity)  Cube
+    glGenVertexArrays(1, &vaoCube);
+    glGenBuffers(1, &vboCube);
+    glBindVertexArray(vaoCube);
+    glBindBuffer(GL_ARRAY_BUFFER, vboCube);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(verticesCube), verticesCube, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) 0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) (3 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) (6 * sizeof(float)));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+
+
     // load our shader program
     shader = gdevLoadShader("finals.vs", "finals.fs");
     if (! shader)
         return false;
 
     // load our texture
-    texture = gdevLoadTexture("finals.png", GL_REPEAT, true, true);
-    if (! texture)
+    texture[0] = gdevLoadTexture("finals.png", GL_REPEAT, true, true);
+    if (! texture[0])
+        return false;
+    texture[1] = gdevLoadTexture("sun.png", GL_REPEAT, true, true);
+    if (! texture[1])
         return false;
 
     // enable z-buffer depth testing and face culling
@@ -322,6 +427,7 @@ bool setup()
     return true;
 }
 
+
 // called by the main function to do rendering per frame
 void render()
 {
@@ -332,18 +438,23 @@ void render()
 
     processInput(pWindow);
 
-    glm::vec3 lightPosition = camera.Position + camera.Front * 1.0f;
+    glm::vec3 lightPosition = camera.Position - camera.Right * 0.5f + camera.Front * 1.1f - camera.Up * 0.3f;
+    glm::vec3 lanternPosition = lightPosition;
+
     ///////////////////////////////////////////////////////////////////////////
     // draw the shadow map
     glm::mat4 lightTransform = renderShadowMap(lightPosition);
     ///////////////////////////////////////////////////////////////////////////
-
+    glBindFramebuffer(GL_FRAMEBUFFER,FBO);
+    
     // clear the whole frame
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // using our shader program...
     glUseProgram(shader);
+
+    glUniform1i(glGetUniformLocation(shader, "isLantern"), 0);
 
     // ... set up the projection matrix...
     glm::mat4 projectionTransform;
@@ -376,7 +487,7 @@ void render()
 
     // ... set the active texture...
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindTexture(GL_TEXTURE_2D, texture[0]);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
     glUniform1i(glGetUniformLocation(shader, "diffuseMap"), 0);
@@ -386,6 +497,29 @@ void render()
     // ... then draw our triangles
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices) / (8 * sizeof(float)));
+
+    glUniformMatrix4fv(glGetUniformLocation(shader, "modelTransform"),
+                       1, GL_FALSE, glm::value_ptr(centerCubeTransform));
+    glBindVertexArray(vaoCube);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesCube) / (8 * sizeof(float)));
+
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture[1]);
+
+    glUniform1i(glGetUniformLocation(shader, "isLantern"), 1);
+    glUniform1i(glGetUniformLocation(shader, "diffuseMap"), 0);
+    glUniform1i(glGetUniformLocation(shader, "isHDR"), 1); // set a flag to indicate that the texture is HDR
+
+    lanternCubeTransform = glm::mat4(1.0f);
+    lanternCubeTransform = glm::translate(lanternCubeTransform, lanternPosition);
+    lanternCubeTransform = glm::scale(lanternCubeTransform, glm::vec3(0.1f, 0.1f, 0.1f));
+    glm::vec4 lantern2Position = lanternCubeTransform * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    std::cout << "Lantern position: " << lantern2Position.x << ", " << lantern2Position.y << ", " << lantern2Position.z << std::endl;
+    glUniformMatrix4fv(glGetUniformLocation(shader, "modelTransform"),
+                    1, GL_FALSE, glm::value_ptr(lanternCubeTransform));
+    glBindVertexArray(vaoCube);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesCube) / (8 * sizeof(float)));
 }
 
 /*****************************************************************************/
@@ -443,21 +577,41 @@ int main(int argc, char** argv)
     // initialize GLAD, which acts as a library loader for the current OS's native OpenGL library
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
 
+    centerCubeTransform[3][1] -= 1.0f;
     // if our initial setup is successful...
     if (setup())
     {
+        SetupPostProcessing();
         // do rendering in a loop until the user closes the window
         while (! glfwWindowShouldClose(pWindow))
-        {
-            // render our next frame
-            // (by default, GLFW uses double-buffering with a front and back buffer;
-            // all drawing goes to the back buffer, so the frame does not get shown yet)
+        {   
+            // Bind the custom framebuffer
+            
+            glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+            // Specify the color of the background
+            glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+            // Clean the back buffer and depth buffer
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            // Enable depth testing since it's disabled when drawing the framebuffer rectangle
+            glEnable(GL_DEPTH_TEST);
+            glEnable(GL_CULL_FACE);
+
             render();
 
-            // swap the GLFW front and back buffers to show the next frame
-            glfwSwapBuffers(pWindow);
+            glUseProgram(fboShader);
+            // Bind the default framebuffer
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            // Draw the framebuffer rectangle
+            glBindVertexArray(rectVAO);
+            glDisable(GL_DEPTH_TEST); // prevents framebuffer rectangle from being discarded
+            glDisable(GL_CULL_FACE);
+            glActiveTexture(GL_TEXTURE5);
+            glBindTexture(GL_TEXTURE_2D, framebufferTexture);
+            glUniform1i(glGetUniformLocation(fboShader, "screenTexture"), 5);
+            glUniform1f(glGetUniformLocation(fboShader, "time"), deltaTime);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
 
-            // process any window events (such as moving, resizing, keyboard presses, etc.)
+            glfwSwapBuffers(pWindow);
             glfwPollEvents();
         }
     }
