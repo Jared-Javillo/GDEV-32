@@ -760,56 +760,56 @@ float verticesTree[] =
 float verticesLeaves[] = 
 {
     // cube top
-    Xmin,  LegHeightTop+4.00f, Zmin,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-    Xmax,  LegHeightTop+4.00f, Zmin,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
-    Xmax,  LegHeightTop+4.00f, Zmax,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-    Xmin,  LegHeightTop+4.00f, Zmin,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-    Xmax,  LegHeightTop+4.00f, Zmax,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-    Xmin,  LegHeightTop+4.00f, Zmax,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+    Xmin-0.25f,  LegHeightTop+4.00f, Zmin+0.25f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+0.25f,  LegHeightTop+4.00f, Zmin+0.25f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+    Xmax+0.25f,  LegHeightTop+4.00f, Zmax+0.25f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+    Xmin-0.25f,  LegHeightTop+4.00f, Zmin+0.25f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+0.25f,  LegHeightTop+4.00f, Zmax+0.25f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+    Xmin-0.25f,  LegHeightTop+4.00f, Zmax+0.25f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
 
     // cube bottom
-    Xmin, LegHeightBot, Zmax,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-    Xmax, LegHeightBot, Zmax,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
-    Xmax, LegHeightBot, Zmin,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-    Xmin, LegHeightBot, Zmax,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
-    Xmax, LegHeightBot, Zmin,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
-    Xmin, LegHeightBot, Zmin,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+    Xmin-0.25f, LegHeightBot+1.50f, Zmax+0.25f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+0.25f, LegHeightBot+1.50f, Zmax+0.25f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+    Xmax+0.25f, LegHeightBot+1.50f, Zmin+0.25f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+    Xmin-0.25f, LegHeightBot+1.50f, Zmax+0.25f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+0.25f, LegHeightBot+1.50f, Zmin+0.25f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+    Xmin-0.25f, LegHeightBot+1.50f, Zmin+0.25f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
 
     // cube front
-    Xmin, LegHeightBot,        Zmin,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
-    Xmax, LegHeightBot,        Zmin,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
-    Xmax, LegHeightTop+4.00f,  Zmin,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
-    Xmin, LegHeightBot,        Zmin,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
-    Xmax, LegHeightTop+4.00f,  Zmin,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
-    Xmin, LegHeightTop+4.00f,  Zmin,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
+    Xmin-0.25f, LegHeightBot+1.50f,        Zmin+0.25f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
+    Xmax+0.25f, LegHeightBot+1.50f,        Zmin+0.25f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
+    Xmax+0.25f, LegHeightTop+4.00f,  Zmin+0.25f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
+    Xmin-0.25f, LegHeightBot+1.50f,        Zmin+0.25f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
+    Xmax+0.25f, LegHeightTop+4.00f,  Zmin+0.25f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
+    Xmin-0.25f, LegHeightTop+4.00f,  Zmin+0.25f,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
 
     // cube back
-    Xmax, LegHeightBot,       Zmax,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-    Xmin, LegHeightBot,       Zmax,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
-    Xmin, LegHeightTop+4.00f, Zmax,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-    Xmax, LegHeightBot,       Zmax,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
-    Xmin, LegHeightTop+4.00f, Zmax,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
-    Xmax, LegHeightTop+4.00f, Zmax,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+    Xmax+0.25f, LegHeightBot+1.50f, Zmax-0.25f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+    Xmin-0.25f, LegHeightBot+1.50f, Zmax-0.25f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+    Xmin-0.25f, LegHeightTop+4.00f, Zmax-0.25f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+    Xmax+0.25f, LegHeightBot+1.50f, Zmax-0.25f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+    Xmin-0.25f, LegHeightTop+4.00f, Zmax-0.25f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+    Xmax+0.25f, LegHeightTop+4.00f, Zmax-0.25f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
 
     // cube right
-    Xmax, LegHeightBot,       Zmin,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-    Xmax, LegHeightBot,       Zmax,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-    Xmax, LegHeightTop+4.00f, Zmax,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-    Xmax, LegHeightBot,       Zmin,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-    Xmax, LegHeightTop+4.00f, Zmax,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-    Xmax, LegHeightTop+4.00f, Zmin,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+    Xmax+0.25f, LegHeightBot+1.50f,       Zmin+0.25f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+0.25f, LegHeightBot+1.50f,       Zmax-0.25f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+    Xmax+0.25f, LegHeightTop+4.00f, Zmax-0.25f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+    Xmax+0.25f, LegHeightBot+1.50f,       Zmin+0.25f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+    Xmax+0.25f, LegHeightTop+4.00f, Zmax-0.25f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+    Xmax+0.25f, LegHeightTop+4.00f, Zmin+0.25f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
 
     // cube left
-   Xmin, LegHeightBot, Zmax, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-   Xmin, LegHeightBot, Zmin, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
-   Xmin,  LegHeightTop+4.00f, Zmin, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-   Xmin, LegHeightBot, Zmax, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
-   Xmin,  LegHeightTop+4.00f,  Zmin, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
-   Xmin,  LegHeightTop+4.00f, Zmax, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+   Xmin-0.25f, LegHeightBot+1.50f, Zmax-0.25f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+   Xmin-0.25f, LegHeightBot+1.50f, Zmin+0.25f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+   Xmin-0.25f,  LegHeightTop+4.00f, Zmin+0.25f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+   Xmin-0.25f, LegHeightBot+1.50f, Zmax-0.25f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+   Xmin-0.25f,  LegHeightTop+4.00f,  Zmin+0.25f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+   Xmin-0.25f,  LegHeightTop+4.00f, Zmax-0.25f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
 };
 // OpenGL object IDs
-GLuint vao, vaoCube, vaoTable, vaoChair, vaoTree;
-GLuint vbo, vboCube, vboTable, vboChair, vboTree;
+GLuint vao, vaoCube, vaoTable, vaoChair, vaoTree, vaoLeaves;
+GLuint vbo, vboCube, vboTable, vboChair, vboTree, vboLeaves;
 GLuint shader, lanternShader;
 GLuint texture[4];
 
@@ -959,6 +959,8 @@ glm::mat4 renderShadowMap(glm::vec3 lightPos)
     glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesChair) / (8 * sizeof(float)));
     glBindVertexArray(vaoTree);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesChair) / (8 * sizeof(float)));
+    glBindVertexArray(vaoLeaves);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesLeaves) / (8 * sizeof(float)));
     
 
     // set the framebuffer back to the default onscreen buffer
@@ -1037,6 +1039,18 @@ bool setup()
     glBindVertexArray(vaoTree);
     glBindBuffer(GL_ARRAY_BUFFER, vboTree);
     glBufferData(GL_ARRAY_BUFFER, sizeof(verticesTree), verticesTree, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) 0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) (3 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) (6 * sizeof(float)));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+
+    glGenVertexArrays(1, &vaoLeaves);
+    glGenBuffers(1, &vboLeaves);
+    glBindVertexArray(vaoLeaves);
+    glBindBuffer(GL_ARRAY_BUFFER, vboLeaves);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(verticesLeaves), verticesLeaves, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) 0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) (3 * sizeof(float)));
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*) (6 * sizeof(float)));
@@ -1181,6 +1195,11 @@ void render()
     glBindVertexArray(vaoTree);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesTree) / (8 * sizeof(float)));
 
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture[4]);
+
+    glBindVertexArray(vaoLeaves);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(verticesLeaves) / (8 * sizeof(float)));
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture[1]);
